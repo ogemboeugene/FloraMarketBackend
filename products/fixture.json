@@ -1,0 +1,213 @@
+[
+  { "model": "products.category", "pk": 1, "fields": { "name": "Plants" } },
+  {
+    "model": "products.product",
+    "pk": 1,
+    "fields": {
+      "name": "Apricot Globemallow",
+      "slug": "apricot-globemallow",
+      "description": "This drought-resistant plant is well-suited for semi-arid areas in Kenya like Turkana and Kitui. It’s known for its vibrant apricot-colored flowers.",
+      "picture": "products/images/Apricot_globemallow.jpg",
+      "price": "450",
+      "quantity": 38,
+      "featured": true,
+      "category": [1]
+    }
+  },
+  {
+    "model": "products.product",
+    "pk": 2,
+    "fields": {
+      "name": "Cone Peak Bedstraw",
+      "slug": "cone-peak-bedstraw",
+      "description": "A hardy plant found in the highlands of Kenya such as Nyeri and Meru. It is popular for its medicinal properties and resilience in cold climates.",
+      "picture": "products/images/Cone_Peak_Bedstraw.jpg",
+      "price": "300",
+      "quantity": 97,
+      "featured": true,
+      "category": [1]
+    }
+  },
+  {
+    "model": "products.product",
+    "pk": 3,
+    "fields": {
+      "name": "Blutaparon",
+      "slug": "blutaparon",
+      "description": "Blutaparon thrives in coastal regions like Mombasa and Lamu, making it a good choice for sandy soils and salty conditions.",
+      "picture": "products/images/Blutaparon.jpg",
+      "price": "400",
+      "quantity": 10,
+      "featured": false,
+      "category": [1]
+    }
+  },
+  {
+    "model": "products.product",
+    "pk": 4,
+    "fields": {
+      "name": "Chamisso Sedge",
+      "slug": "chamisso-sedge",
+      "description": "This grass-like plant is commonly found in wetlands and marshy areas like Naivasha and Lake Victoria regions. It helps prevent soil erosion.",
+      "picture": "products/images/Chamisso_Sedge.jpeg",
+      "price": "900",
+      "quantity": 17,
+      "featured": false,
+      "category": [1]
+    }
+  },
+  {
+    "model": "products.product",
+    "pk": 5,
+    "fields": {
+      "name": "Marsh Straw Sedge",
+      "slug": "marsh-straw-sedge",
+      "description": "Ideal for regions like the Kisii highlands, this plant grows in swampy and moist conditions, often used for mat weaving.",
+      "picture": "products/images/Marsh_Straw_Sedge.jpg",
+      "price": "600",
+      "quantity": 91,
+      "featured": true,
+      "category": [1]
+    }
+  },
+  {
+    "model": "products.product",
+    "pk": 6,
+    "fields": {
+      "name": "Largeflower False Rosemary",
+      "slug": "largeflower-false-rosemary",
+      "description": "Found in hilly terrains like Kericho and Nandi, this plant is admired for its aromatic properties and large flowers.",
+      "picture": "products/images/Largeflower_False_Rosemary.jpg",
+      "price": "1500",
+      "quantity": 96,
+      "featured": true,
+      "category": [1]
+    }
+  },
+  {
+    "model": "products.product",
+    "pk": 7,
+    "fields": {
+      "name": "Oregon Bleeding Heart",
+      "slug": "oregon-bleeding-heart",
+      "description": "This stunning plant is suitable for decorative gardens in urban centers like Nairobi and Kisumu due to its heart-shaped flowers.",
+      "picture": "products/images/Oregon_Bleeding_Heart.jpg",
+      "price": "1000",
+      "quantity": 43,
+      "featured": false,
+      "category": [1]
+    }
+  },
+  {
+    "model": "products.product",
+    "pk": 8,
+    "fields": {
+      "name": "Pore Lichen",
+      "slug": "pore-lichen",
+      "description": "Commonly found on rocks and tree trunks in forested areas like Kakamega Forest, this lichen is used for dyeing and traditional medicine.",
+      "picture": "products/images/Pore_Lichen.jpg",
+      "price": "650",
+      "quantity": 14,
+      "featured": false,
+      "category": [1]
+    }
+  },
+  {
+    "model": "products.product",
+    "pk": 9,
+    "fields": {
+      "name": "Chinese Haw",
+      "slug": "chinese-haw",
+      "description": "An exotic plant that grows well in Kenyan highlands and is known for its small, edible berries with a sweet-tart flavor.",
+      "picture": "products/images/chinese_haw.jpg",
+      "price": "1070",
+      "quantity": 67,
+      "featured": true,
+      "category": [1]
+    }
+  },
+  {
+    "model": "products.product",
+    "pk": 10,
+    "fields": {
+      "name": "Toringo Crab",
+      "slug": "toringo-crab",
+      "description": "A unique plant with crabapple-like fruits, thriving in regions like Eldoret and Nakuru due to favorable conditions.",
+      "picture": "products/images/Toringo_Crab.jpg",
+      "price": "2400",
+      "quantity": 59,
+      "featured": true,
+      "category": [1]
+    }
+  },
+  {
+    "model": "products.product",
+    "pk": 11,
+    "fields": {
+      "name": "Kauai Hau Kuahiwi",
+      "slug": "kauai-hau-kuahiwi",
+      "description": "Native to tropical climates, this plant is suitable for coastal and lowland areas like Kwale.",
+      "picture": "products/images/Kauai_Hau_Kuahiwi.jpg",
+      "price": "2000",
+      "quantity": 87,
+      "featured": false,
+      "category": [1]
+    }
+  },
+  {
+    "model": "products.product",
+    "pk": 12,
+    "fields": {
+      "name": "Pygmy Goldenweed",
+      "slug": "pygmy-goldenweed",
+      "description": "A small, resilient plant commonly found in semi-arid regions like Garissa. Known for its golden-yellow blooms.",
+      "picture": "products/images/Pygmy_Goldenweed.jpeg",
+      "price": "3200",
+      "quantity": 48,
+      "featured": true,
+      "category": [1]
+    }
+  },
+  {
+    "model": "products.product",
+    "pk": 13,
+    "fields": {
+      "name": "Red-vein Yellow Loosestrife",
+      "slug": "red-vein-yellow-loosestrife",
+      "description": "This vibrant plant with red veins and yellow flowers is commonly found in wetlands and near rivers like Athi and Tana.",
+      "picture": "products/images/Red-vein_Yellow_Loosestrife.jpg",
+      "price": "3500",
+      "quantity": 12,
+      "featured": false,
+      "category": [1]
+    }
+  },
+  {
+    "model": "products.product",
+    "pk": 14,
+    "fields": {
+      "name": "Isachne",
+      "slug": "isachne",
+      "description": "A grass species found in the tea-growing regions of Kenya like Kericho and Nandi Hills, used for erosion control.",
+      "picture": "products/images/Isachne.jpg",
+      "price": "1300",
+      "quantity": 66,
+      "featured": true,
+      "category": [1]
+    }
+  },
+  {
+    "model": "products.product",
+    "pk": 15,
+    "fields": {
+      "name": "Santo Domingo False Willow",
+      "slug": "santo-domingo-false-willow",
+      "description": "Suitable for areas like Kitale and Bungoma, this willow-like plant provides shade and soil conservation benefits.",
+      "picture": "products/images/Santo_Domingo_False_Willow.jpg",
+      "price": "850",
+      "quantity": 10,
+      "featured": true,
+      "category": [1]
+    }
+  }
+]
