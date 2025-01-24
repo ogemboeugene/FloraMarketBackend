@@ -42,7 +42,7 @@ Then, clone this repository to the current directory:
 
 `git clone https://github.com/kkosiba/ecommerce-backend.git .`
 
-For the backend to work, one needs to setup database like SQLite or PostgreSQL on a local machine. This project uses PostgreSQL by default (see [Django documentation](https://docs.djangoproject.com/en/3.2/ref/settings/#databases) for different setup). This process may vary from one OS to another, eg. on Arch Linux one can follow a straightforward guide [here](https://wiki.archlinux.org/index.php/PostgreSQL).
+For the backend to work, one needs to setup database like SQLite or PostgreSQL on a local machine. This project uses PostgreSQL by default (see [Django documentation](https://docs.djangoproject.com/en/3.2/ref/settings/#databases).
 
 The database settings are specified in `src/settings/local.py`. In particular the default database name is `eCommerceDjango`, which can be created from the PostgreSQL shell by running `createdb eCommerceDjango`.
 
@@ -51,8 +51,14 @@ Next, set up a virtual environment and activate it:
 `python3 -m venv env && source env/bin/activate`
 
 Install required packages:
+`cd requirements.txt`
+for testing locally
+`pip install -r base.txt`
+`pip install -r development.txt`
 
-`pip3 install -r requirements.txt`
+production you will use
+`pip install -r base.txt`
+`pip install -r production.txt`
 
 Next, perform migration:
 
@@ -64,8 +70,22 @@ At this point, one may want to create a superuser account and create some produc
 
 The backend is now ready. Run a local server with
 
-`python3 manage.py runserver --settings=src.settings.local`
+`python manage.py runserver --settings=src.settings.local`
 
 The backend should be available at `localhost:8000`.
 
-In order to use [Stripe payments](https://stripe.com/) one needs to create an account and obtain a pair of keys (available in the dashboard after signing in). These keys should replace `STRIPE_SECRET_KEY` and `STRIPE_PUBLISHABLE_KEY` values in `src/settings/local.py`.
+In order to use [Stripe payments](https://stripe.com/) one needs to create an account and obtain a pair of keys (available in the dashboard after signing in). 
+create a environment file .env and have provide your fields correctly
+
+# Stripe Configuration
+STRIPE_SECRET_KEY=<your-stripe-secret-key>
+STRIPE_PUBLISHABLE_KEY=<your-stripe-publishable-key>
+
+# M-Pesa Configuration
+MPESA_ACCESS_TOKEN=<your-mpesa-access-token>
+MPESA_SHORTCODE=<your-mpesa-shortcode>
+MPESA_SHORTCODE_KEY=<your-mpesa-shortcode-key>
+MPESA_SHORTCODE_LIPA=<your-mpesa-lipa-shortcode>
+MPESA_BASE_URL=https://api.safaricom.co.ke
+MPESA_LIPA_URL=https://api.safaricom.co.ke/mpesa/stkpush/v1/processrequest
+MPESA_CALL_BACK_URL=<your-mpesa-callback-url>
