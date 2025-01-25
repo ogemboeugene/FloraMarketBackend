@@ -1,13 +1,16 @@
 import base64
 import datetime
 import json
+import os
 import requests
 import stripe
 from django.conf import settings
 from django.http import HttpResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_http_methods
+from dotenv import load_dotenv
 
+load_dotenv() 
 stripe.api_key = settings.STRIPE_SECRET_KEY
 
 
@@ -70,40 +73,50 @@ def charge_view(request):
         )
 
 
+# Load environment variables
+consumer_key = os.environ.get("MPESA_CONSUMER_KEY")
+consumer_secret = os.environ.get("MPESA_CONSUMER_SECRET")
+shortcode = os.environ.get("SHORTCODE")
+passkey = os.environ.get("MPESA_PASSKEY")
+stk_push_url = os.environ.get("MPESA_STK_PUSH_URL")
+auth_url = os.environ.get("MPESA_AUTH_URL")
+callback_url = os.environ.get("MPESA_CALLBACK_URL")
+
+
 @require_http_methods(["POST"])
 @csrf_exempt
 def mpesa_payment(request):
     try:
-        phone_number = request.POST.get("phone_number")
-        amount = request.POST.get("amount")
-        transaction_reference = request.POST.get("transaction_reference")
+        data = json.loads(request.body)
 
-        # Ensure all required parameters are provided
-        if not phone_number or not amount or not transaction_reference:
+        phone_number = data.get("phoneNumber")
+        amount = data.get("amount")
+        transaction_reference = data.get("transactionReference")
+
+        if not phone_number or not amount:
             return HttpResponse(
-                json.dumps({"message": "Phone number, amount, and transaction reference are required."}),
+                json.dumps({"message": "Phone number and amount are required."}),
                 status=400,
+                content_type="application/json",
             )
 
-        # Fetch M-Pesa configuration from environment variables
-        consumer_key = os.getenv("MPESA_CONSUMER_KEY")
-        consumer_secret = os.getenv("MPESA_CONSUMER_SECRET")
-        shortcode = os.getenv("MPESA_SHORTCODE")
-        passkey = os.getenv("MPESA_PASSKEY")
-        stk_push_url = os.getenv("MPESA_STK_PUSH_URL")
-        callback_url = os.getenv("MPESA_CALLBACK_URL")
-        auth_url = os.getenv("MPESA_AUTH_URL")
-
-        # Step 1: Generate the access token
         auth_response = requests.get(auth_url, auth=(consumer_key, consumer_secret))
+
         if auth_response.status_code != 200:
             return HttpResponse(
                 json.dumps({"message": "Failed to generate M-Pesa access token.", "error": auth_response.json()}),
                 status=auth_response.status_code,
+                content_type="application/json",
             )
+        
         access_token = auth_response.json().get("access_token")
+        if not access_token:
+            return HttpResponse(
+                json.dumps({"message": "No access token received from M-Pesa."}),
+                status=500,
+                content_type="application/json",
+            )
 
-        # Step 2: Prepare STK push payload
         timestamp = datetime.datetime.now().strftime("%Y%m%d%H%M%S")
         password = f"{shortcode}{passkey}{timestamp}".encode("utf-8")
         encoded_password = base64.b64encode(password).decode("utf-8")
@@ -118,32 +131,41 @@ def mpesa_payment(request):
             "PartyB": shortcode,
             "PhoneNumber": phone_number,
             "CallBackURL": callback_url,
-            "AccountReference": transaction_reference,
+            "AccountReference": transaction_reference or "DefaultReference",
             "TransactionDesc": "Payment for goods/services",
         }
-
-        # Step 3: Send the STK push request
         headers = {
             "Authorization": f"Bearer {access_token}",
             "Content-Type": "application/json",
         }
         response = requests.post(stk_push_url, headers=headers, json=payload)
-
         # Handle STK push response
         if response.status_code == 200:
             response_data = response.json()
             return HttpResponse(
                 json.dumps({"message": "Payment request sent successfully.", "data": response_data}),
                 status=200,
+                content_type="application/json",
             )
         else:
+            error_message = response.json() if response.status_code != 200 else "Payment failed, please try again."
             return HttpResponse(
-                json.dumps({"message": "Payment failed, please try again.", "error": response.json()}),
+                json.dumps({"message": error_message, "error": response.json()}),
                 status=response.status_code,
+                content_type="application/json",
             )
 
+    except requests.exceptions.RequestException as e:
+        return HttpResponse(
+            json.dumps({"message": "Network or request error occurred.", "error": str(e)}),
+            status=500,
+            content_type="application/json",
+        )
+    
     except Exception as e:
+        import traceback
         return HttpResponse(
             json.dumps({"message": "Error processing M-Pesa payment.", "error": str(e)}),
             status=500,
+            content_type="application/json",
         )
