@@ -1,3 +1,5 @@
+import base64
+import datetime
 import json
 import requests
 import stripe
@@ -67,6 +69,7 @@ def charge_view(request):
             json.dumps({"message": "Unable to process payment, try again."})
         )
 
+
 @require_http_methods(["POST"])
 @csrf_exempt
 def mpesa_payment(request):
@@ -82,56 +85,61 @@ def mpesa_payment(request):
                 status=400,
             )
 
-        # M-Pesa API URL for STK push
-        mpesa_url = "https://api.safaricom.co.ke/mpesa/stkpush/v1/processrequest"
+        # Fetch M-Pesa configuration from environment variables
+        consumer_key = os.getenv("MPESA_CONSUMER_KEY")
+        consumer_secret = os.getenv("MPESA_CONSUMER_SECRET")
+        shortcode = os.getenv("MPESA_SHORTCODE")
+        passkey = os.getenv("MPESA_PASSKEY")
+        stk_push_url = os.getenv("MPESA_STK_PUSH_URL")
+        callback_url = os.getenv("MPESA_CALLBACK_URL")
+        auth_url = os.getenv("MPESA_AUTH_URL")
 
-        # Set headers for M-Pesa API request
-        headers = {
-            "Authorization": f"Bearer {settings.MPESA_ACCESS_TOKEN}",
-            "Content-Type": "application/json",
-        }
+        # Step 1: Generate the access token
+        auth_response = requests.get(auth_url, auth=(consumer_key, consumer_secret))
+        if auth_response.status_code != 200:
+            return HttpResponse(
+                json.dumps({"message": "Failed to generate M-Pesa access token.", "error": auth_response.json()}),
+                status=auth_response.status_code,
+            )
+        access_token = auth_response.json().get("access_token")
 
-        # Prepare the payload for the M-Pesa payment request
+        # Step 2: Prepare STK push payload
+        timestamp = datetime.datetime.now().strftime("%Y%m%d%H%M%S")
+        password = f"{shortcode}{passkey}{timestamp}".encode("utf-8")
+        encoded_password = base64.b64encode(password).decode("utf-8")
+
         payload = {
-            "BusinessShortcode": settings.MPESA_SHORTCODE,
-            "LipaNaMpesaOnlineShortcode": settings.MPESA_SHORTCODE,
-            "LipaNaMpesaOnlineLipa": {
-                "PhoneNumber": phone_number,
-                "Amount": amount,
-                "TransactionReference": transaction_reference,
-            },
-            "Shortcode": settings.MPESA_SHORTCODE,
-            "CommandID": "CustomerPayBillOnline",
-            "PartyA": phone_number,
-            "PartyB": settings.MPESA_SHORTCODE,
-            "PhoneNumber": phone_number,
+            "BusinessShortCode": shortcode,
+            "Password": encoded_password,
+            "Timestamp": timestamp,
+            "TransactionType": "CustomerPayBillOnline",
             "Amount": amount,
-            "TransactionType": "Paybill",
-            "CallBackURL": f"{settings.BASE_URL}/api/mpesa/callback/",
+            "PartyA": phone_number,
+            "PartyB": shortcode,
+            "PhoneNumber": phone_number,
+            "CallBackURL": callback_url,
             "AccountReference": transaction_reference,
             "TransactionDesc": "Payment for goods/services",
         }
 
-        # Make the request to M-Pesa API
-        response = requests.post(mpesa_url, headers=headers, json=payload)
+        # Step 3: Send the STK push request
+        headers = {
+            "Authorization": f"Bearer {access_token}",
+            "Content-Type": "application/json",
+        }
+        response = requests.post(stk_push_url, headers=headers, json=payload)
 
-        # Handle M-Pesa API response
+        # Handle STK push response
         if response.status_code == 200:
             response_data = response.json()
             return HttpResponse(
-                json.dumps({
-                    "message": "Payment request sent successfully.",
-                    "data": response_data
-                }),
-                status=200
+                json.dumps({"message": "Payment request sent successfully.", "data": response_data}),
+                status=200,
             )
         else:
             return HttpResponse(
-                json.dumps({
-                    "message": "Payment failed, please try again.",
-                    "error": response.json()
-                }),
-                status=response.status_code
+                json.dumps({"message": "Payment failed, please try again.", "error": response.json()}),
+                status=response.status_code,
             )
 
     except Exception as e:
